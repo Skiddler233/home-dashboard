@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TaskItem } from "./TaskItem";
 import type { Task } from "../../types/task";
 import {
@@ -41,8 +41,8 @@ export function TaskList() {
     setTasks(updated);
   }
 
-  async function addTask(e?: FormEvent) {
-    e?.preventDefault();
+  const addTask = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
     if (!newTaskTitle.trim()) return;
 
     await createTask(newTaskTitle);

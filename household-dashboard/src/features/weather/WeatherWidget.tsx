@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { fetchCurrentWeather } from "../../api/weatherApi";
 import { getWeatherLocation, saveWeatherLocation } from "../../api/settingsApi";
 import type { CurrentWeather } from "../../types/weatherForecast";
@@ -42,7 +42,7 @@ export function WeatherWidget() {
     init();
   }, [loadWeather]);
 
-  async function handleSubmit(e: FormEvent) {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const location = locationInput.trim();
