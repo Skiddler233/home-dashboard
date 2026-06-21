@@ -12,57 +12,74 @@ export function TaskItem({
   task,
   onToggle,
   onDelete,
-  onEdit
+  onEdit,
 }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
-  
+
   return (
-    <div>
-      <input
-        type="checkbox"
-        checked={task.completed}
-        onChange={() => onToggle(task.id)}
-      />
+    <li className={`task-item${task.completed ? " task-item--done" : ""}`}>
+      <label className="task-check">
+        <input
+          type="checkbox"
+          checked={task.completed}
+          onChange={() => onToggle(task.id)}
+        />
+        <span className="task-check__box" aria-hidden="true" />
+      </label>
 
       {isEditing ? (
-        <>
+        <div className="task-edit">
           <input
+            className="input input--compact"
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
+            autoFocus
           />
-
-          <button
-            onClick={() => {
-              onEdit(task.id, editTitle);
-              setIsEditing(false);
-            }}
-          >
-            Save
-          </button>
-          <button
-            onClick={() => {
-              setEditTitle(task.title);
-              setIsEditing(false);
-            }}
-          >
-            Cancel
-          </button>
-        </>
+          <div className="task-actions">
+            <button
+              className="btn btn-primary btn--compact"
+              type="button"
+              onClick={() => {
+                onEdit(task.id, editTitle);
+                setIsEditing(false);
+              }}
+            >
+              Save
+            </button>
+            <button
+              className="btn btn-ghost btn--compact"
+              type="button"
+              onClick={() => {
+                setEditTitle(task.title);
+                setIsEditing(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       ) : (
         <>
-          {task.title}
-
-          <button onClick={() => setIsEditing(true)}>
-            Edit
-          </button>
-
-          <button onClick={() => onDelete(task.id)}>
-            Delete
-          </button>
-
+          <span className="task-title">{task.title}</span>
+          <div className="task-actions">
+            <button
+              className="btn btn-ghost btn--compact"
+              type="button"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-danger btn--compact"
+              type="button"
+              onClick={() => onDelete(task.id)}
+            >
+              Delete
+            </button>
+          </div>
         </>
       )}
-    </div>
+    </li>
   );
 }

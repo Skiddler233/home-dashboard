@@ -8,3 +8,10 @@ class Task(Base):
     title = Column(String, nullable=False)
     completed = Column(Boolean, default=False)
     createdAt = Column(String, nullable=False)
+
+
+class Setting(Base):
+    __tablename__ = "settings"
+
+    key = Column(String, primary_key=True)
+    value = Column(String, nullable=False)

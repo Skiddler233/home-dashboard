@@ -1,5 +1,5 @@
 from database import SessionLocal
-from models import Task
+from models import Task, Setting
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import uuid
@@ -7,6 +7,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
+
+WEATHER_LOCATION_KEY = "weather_location"
+DEFAULT_WEATHER_LOCATION = "London"
 
 # -------------------------
 # In-memory database
@@ -109,6 +112,48 @@ def delete_task(task_id):
         
         return "", 204
     
+    finally:
+        db.close()
+
+# -------------------------
+# GET weather location setting
+# -------------------------
+@app.route("/api/settings/weather-location", methods=["GET"])
+def get_weather_location():
+    db = SessionLocal()
+
+    try:
+        setting = db.query(Setting).filter(Setting.key == WEATHER_LOCATION_KEY).first()
+        location = setting.value if setting else DEFAULT_WEATHER_LOCATION
+        return jsonify({"location": location})
+    finally:
+        db.close()
+
+# -------------------------
+# UPDATE weather location setting
+# -------------------------
+@app.route("/api/settings/weather-location", methods=["PUT"])
+def update_weather_location():
+    db = SessionLocal()
+
+    try:
+        data = request.json
+        location = data.get("location", "").strip()
+
+        if not location:
+            return jsonify({"error": "Location is required"}), 400
+
+        setting = db.query(Setting).filter(Setting.key == WEATHER_LOCATION_KEY).first()
+
+        if setting:
+            setting.value = location
+        else:
+            setting = Setting(key=WEATHER_LOCATION_KEY, value=location)
+            db.add(setting)
+
+        db.commit()
+
+        return jsonify({"location": setting.value})
     finally:
         db.close()
 

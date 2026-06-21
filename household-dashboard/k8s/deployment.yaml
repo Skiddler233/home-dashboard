@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: household-dashboard
+  labels:
+    app: household-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: household-dashboard
+  template:
+    metadata:
+      labels:
+        app: household-dashboard
+    spec:
+      containers:
+        - name: household-dashboard
+          image: YOUR_REGISTRY/household-dashboard:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5174
+          env:
+            - name: PORT
+              value: "5174"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: household-dashboard
+spec:
+  selector:
+    app: household-dashboard
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 5174
+      protocol: TCP
+      name: http
